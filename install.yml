@@ -1,0 +1,8 @@
+---
+- hosts: postgres
+  become: yes
+  roles:
+  - postgres-install
+  - postgres-config
+  - gitlab-install
+

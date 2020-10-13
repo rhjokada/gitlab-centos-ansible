@@ -1,0 +1,12 @@
+---
+- hosts: postgres
+  become: yes
+  vars:
+    pg_config_database_name: 'gitlab'
+    pg_config_username: 'gitlab'
+    pg_config_password: 'md5e071939c4de869afd8ac1e2d4d29449a'
+    gitlab_omniauth_redmine_base_url: https://redmine/
+    gitlab_omniauth_redmine_consumer_key: 
+    gitlab_omniauth_redmine_consumer_secret: 
+  roles:
+  - gitlab-config
