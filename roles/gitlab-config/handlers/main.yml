@@ -1,0 +1,6 @@
+---
+# handlers file for gitlab-config
+- name: restart gitlab
+  systemd:
+    name: gitlab-runsvdir
+    state: restarted

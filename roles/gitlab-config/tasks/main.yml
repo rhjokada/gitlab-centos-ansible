@@ -1,0 +1,55 @@
+---
+# tasks file for gitlab-config
+
+# OAuth Integration
+- name: "add plugins to Gemfile"
+  blockinfile:
+    dest: /opt/gitlab/embedded/service/gitlab-rails/Gemfile
+    block: |
+      gem 'omniauth-redmine', '~> 0.0.2'
+- name: "gem install omniauth-redmine"
+  gem:
+    name: omniauth-redmine
+    version: 0.0.2
+    state: present
+    executable: /opt/gitlab/embedded/bin/gem
+    user_install: false
+    # install_dir is check this command: `/opt/gitlab/embedded/bin/gem environment gemdir`
+    install_dir: /opt/gitlab/embedded/lib/ruby/gems/2.6.0/gems/
+- name: bundle install
+  community.general.bundler:
+    state: present
+    gemfile: /opt/gitlab/embedded/service/gitlab-rails/Gemfile
+    executable: /opt/gitlab/embedded/bin/bundle
+
+- name: "add oauth"
+  template:
+    dest: '/opt/gitlab/embedded/service/gitlab-rails/config/initializers/omniauth.rb'
+    src: 'omniauth.rb.j2'
+    backup: yes
+    force: yes
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+    # setype: undefined # not required. Type part of SELinux file context, C(_default) feature works as for I(seuser).
+    # serole: undefined # not required. Role part of SELinux file context, C(_default) feature works as for I(seuser).
+- name:
+  template:
+    dest: '/etc/gitlab/gitlab.rb'
+    src: 'gitlab.rb.j2'
+    backup: yes
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+
+- name: Exclude the production group from installing
+  command:
+    /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/rake assets:precompile RAILS_ENV=production
+  args:
+    chdir: /opt/gitlab/embedded/service/gitlab-rails/
+
+# handler に変更
+- name: "gitlab-ctl reconfigure"
+  command:
+    /opt/gitlab/bin/gitlab-ctl reconfigure
+  notify: restart gitlab

@@ -1,0 +1,77 @@
+- name: install requires packages
+  dnf:
+    name:
+    - git
+    - golang
+    - ruby
+    - redis
+    state: installed
+- name: Download Install Script for nodejs
+  get_url:
+    url: https://rpm.nodesource.com/setup_12.x
+    dest: /tmp/setup.sh
+    mode: '0744'
+- name: Install node
+  shell: /tmp/setup.sh
+  args:
+    creates: /etc/yum.repos.d/nodesource-*.repo
+- name: yum update
+  dnf:
+    name: '*'
+    state: latest
+- name: install nodejs
+  dnf:
+    name: nodejs
+    state: installed
+- name: Download yarn.repo
+  get_url:
+    url: https://dl.yarnpkg.com/rpm/yarn.repo
+    dest: /etc/yum.repos.d/yarn.repo
+    mode: '0644'
+- name: install yarn
+  dnf:
+    name: yarn
+    state: installed
+
+- name: install psycopg2
+  dnf:
+    name: python3-psycopg2
+    state: installed
+
+# Install self-managed GitLab
+# https://about.gitlab.com/install/#centos-8
+
+# 1. Install and configure the necessary dependencies
+- name: install requires packages
+  dnf:
+    name:
+    - curl
+    - policycoreutils
+    - openssh-server 
+    state: installed
+- name: add firewall rule
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+  - http
+  - https
+  notify: "firewall reload"
+
+# 2. Add the GitLab package repository and install the package
+- name: Download Install Script for gitlab
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh
+    dest: /tmp/gitlab-setup.sh
+    mode: '0744'
+- name: Install gitlab repo
+  shell: /tmp/gitlab-setup.sh
+  args:
+    creates: /etc/yum.repos.d/gitlab*.repo
+- name: Install gitlab
+  dnf:
+    name: gitlab-ce
+    state: installed
+  environment:
+    EXTERNAL_URL: '{{ gitlab_external_url }}'

@@ -1,0 +1,6 @@
+---
+# handlers file for postgres-config
+- name: restart service
+  systemd:
+    name: postgresql
+    state: restarted

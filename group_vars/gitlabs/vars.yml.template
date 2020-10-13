@@ -1,0 +1,23 @@
+gitlab_host: example.com
+
+gitlab_external_url: 'https://example.com/gitlab'
+gitlab_omniauth_host: 'http://{{ gitlab_host }}'
+
+gitlab_db_host: '{{ gitlab_host }}'
+gitlab_db_port: 5432
+gitlab_db_database: gitlab
+gitlab_db_username: gitlab
+gitlab_db_password: password
+
+## connect redmine
+# check <redmine_url>/oauth_clients
+gitlab_omniauth_redmine_base_url: 
+gitlab_omniauth_redmine_consumer_key: 
+gitlab_omniauth_redmine_consumer_secret: 
+
+pg_config_database_name: "{{ gitlab_db_database }}"
+pg_config_username: "{{ gitlab_db_username }}"
+## password
+## - echo "md5$(echo -n '<password><username>' | md5sum | awk '{print $1}')"
+##   - e.g. echo "md5$(echo -n 'passwordsample' | md5sum | awk '{print $1}')"
+pg_config_password: ''
