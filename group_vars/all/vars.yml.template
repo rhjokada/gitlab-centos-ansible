@@ -1,6 +1,9 @@
-gitlab_host: example.com
+gitlab_host_internal: localhost
+gitlab_host_external: localhost
 
-gitlab_external_url: 'https://example.com/gitlab'
+gitlab_host: "{{ gitlab_host_internal }}"
+
+gitlab_external_url: 'https://{{ gitlab_host_external }}/gitlab'
 gitlab_omniauth_host: 'http://{{ gitlab_host }}'
 
 gitlab_db_host: '{{ gitlab_host }}'
@@ -15,9 +18,6 @@ gitlab_omniauth_redmine_base_url:
 gitlab_omniauth_redmine_consumer_key: 
 gitlab_omniauth_redmine_consumer_secret: 
 
-pg_config_database_name: "{{ gitlab_db_database }}"
-pg_config_username: "{{ gitlab_db_username }}"
-## password
-## - echo "md5$(echo -n '<password><username>' | md5sum | awk '{print $1}')"
-##   - e.g. echo "md5$(echo -n 'passwordsample' | md5sum | awk '{print $1}')"
-pg_config_password: ''
+postgres_database_name: "{{ gitlab_db_database }}"
+postgres_username: "{{ gitlab_db_username }}"
+postgres_password: "{{ gitlab_db_password }}"
