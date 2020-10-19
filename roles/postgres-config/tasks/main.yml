@@ -1,29 +1,35 @@
 ---
 # tasks file for postgres-config
+
 - name: "add user's access control: pg_hba.conf"
   postgresql_pg_hba:
-    dest: /var/lib/pgsql/data/pg_hba.conf
+    dest: "{{ postgres_hba }}"
     contype: host
-    users: "{{ pg_config_username }}"
-    databases: "{{ pg_config_database_name }}"
+    users: "{{ postgres_username }}"
+    databases: "{{ postgres_database_name }}"
     source: all
     method: md5
-  notify: restart service
+  notify: restart postgres
+  become_user: postgres
 
 - name: add user
   postgresql_user:
-    name: "{{ pg_config_username }}"
-    password: "{{ pg_config_password }}"
-    role_attr_flags: "{{ pg_config_assign_roles }}"
-  become_user: postgres
-- name: add schema
-  postgresql_schema:
-    name: "{{ pg_config_database_name }}"
-    owner: "{{ pg_config_username }}"
-  become_user: postgres
-- name: add database
-  postgresql_db:
-    name: "{{ pg_config_database_name }}"
-    encoding: utf-8
+    name: "{{ postgres_username }}"
+    password: "{{ postgres_password_md5 }}"
+    role_attr_flags: "{{ postgres_assign_roles }}"
   become_user: postgres
 
+- name: add schema
+  postgresql_schema:
+    name: "{{ postgres_database_name }}"
+    owner: "{{ postgres_username }}"
+  become_user: postgres
+
+- name: add database
+  postgresql_db:
+    name: "{{ postgres_database_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'ja_JP.UTF-8'
+    lc_ctype: 'ja_JP.UTF-8'
+    template: 'template0'
+  become_user: postgres
