@@ -4,5 +4,9 @@
   roles:
   - postgres-install
   - postgres-config
+
+- hosts: gitlab
+  become: yes
+  roles:
   - gitlab-install
 
