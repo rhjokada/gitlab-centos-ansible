@@ -1,5 +1,5 @@
-gitlab      ansible_host=
-postgres    ansible_host=
+gitlab      ansible_host=example.com
+postgres    ansible_host=example.com
 
 [gitlab_server]
 gitlab
